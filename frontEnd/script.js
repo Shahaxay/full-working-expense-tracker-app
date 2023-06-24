@@ -37,15 +37,21 @@ try{
         };
         try{
             const result=await axios.post("http://localhost:3000/user/login",loginObj)
-            console.log(result);
+            // console.log(result);
             if(result.data.success==="false"){
                 showMessage('password wrong','red');
             }else if(result.data.success==="true"){
-                showMessage('logged in successfully','green');
+                showMessage(result.data.message,'green');
             }
         }catch(err){
-           showMessage('user does not exist','red');
-            console.log(err);
+            const res=err.response;
+            if(res.status==401){
+                showMessage(res.data.message,'red');
+            }else if(res.status==404){
+                showMessage(res.data.message,'red');
+            }else{
+                console.log(err.message);
+            }
         }
     })
 }

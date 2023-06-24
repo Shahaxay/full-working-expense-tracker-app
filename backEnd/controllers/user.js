@@ -19,11 +19,11 @@ exports.postLogin=async(req,res,next)=>{
     try{
         const result=await User.findAll({where:{email:req.body.email}});
         if(result.length==0){
-            res.status(404).json({success:"0",message:"user does not exists"});
+            res.status(404).json({success:"false",message:"User not found"});
         }else if(result[0].password!==req.body.password){
-            res.json({success:"false",message:'password wrong'});
+            res.status(401).json({success:"false",message:'User not authorized'});
         }else{
-            res.json({success:"true",message:"logged in"});
+            res.json({success:"true",message:"logged in successfully"});
         }
     }
     catch(err){
