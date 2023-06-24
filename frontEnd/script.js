@@ -1,6 +1,4 @@
-console.log("ak");
-
-var name=document.getElementById('name');
+var uname=document.getElementById('name');
 var email=document.getElementById('email');
 var password=document.getElementById('password');
 var frm=document.getElementById('frm');
@@ -9,7 +7,7 @@ console.log(document);
 frm.addEventListener('submit',async (e)=>{
     e.preventDefault();
     var signupObj={
-        name:name.value,
+        name:uname.value,
         email:email.value,
         password:password.value
     };
