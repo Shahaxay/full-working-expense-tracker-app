@@ -15,14 +15,13 @@ try{
         };
         try{
             const result=await axios.post("http://localhost:3000/user/signup",signupObj)
-            console.log(result.status);
+            if(result.status==200){
+                showMessage("Your acount Created Successfully",'green');
+                frm.reset();
+            }
         }catch(err){
-            dest.innerText='email already exists';
-            dest.style.color='red';
-            setTimeout(() => {
-                dest.innerText='';   
-            }, 2000);
-            console.log(err);
+            showMessage(err.response.data.message,'red');
+            // console.log(err.response.status);
         }
     })
 }

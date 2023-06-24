@@ -1,30 +1,48 @@
+const bcrypt=require('bcrypt');
+
 const User=require('../models/users');
 
 exports.postSignup=async(req,res,next)=>{
-    try{
-        const result=await User.create({
-            name:req.body.name,
-            email:req.body.email,
-            password:req.body.password
-        });
-        res.json(result);
-    }
-    catch(err){
-        console.log(err.message);
-        res.status(409).json({'message':'email already exist'});
-    }
+    let {name,email,password}=req.body;
+    let salt=10;
+    bcrypt.hash(password,10,async (err,hash)=>{
+        if(err){
+            console.log(err);
+        }else{
+            try{
+                const result=await User.create({
+                    name,
+                    email,
+                    password:hash
+                });
+                res.status(200).json(result);
+            }
+            catch(err){
+                console.log(err.message);
+                res.status(409).json({'message':'email already exist'});
+            }
+        }
+    })
 }
 
 exports.postLogin=async(req,res,next)=>{
     try{
-        const result=await User.findAll({where:{email:req.body.email}});
+        const {email,password}=req.body;
+        const result=await User.findAll({where:{email:email}});
         if(result.length==0){
             res.status(404).json({success:"false",message:"User not found"});
-        }else if(result[0].password!==req.body.password){
-            res.status(401).json({success:"false",message:'User not authorized'});
         }else{
-            res.json({success:"true",message:"logged in successfully"});
-        }
+            bcrypt.compare(password,result[0].password,(err,results)=>{
+            if(err){ 
+                throw new Error("Something went wrong");
+            }
+            else if(results){
+                res.status(200).json({success:"true",message:"logged in successfully"});
+            }else{
+                res.status(401).json({success:"false",message:'User not authorized'});
+            }
+        })
+    }
     }
     catch(err){
         console.log(err);
