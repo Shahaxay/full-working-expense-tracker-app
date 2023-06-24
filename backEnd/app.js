@@ -4,13 +4,15 @@ const cors=require('cors');
 
 const db=require('./util/database')
 const userRouter=require('./routes/user');
+const expenseRouter=require('./routes/expense');
 
 const app=express();
 
 app.use(bodyParser.json({extended:false}));
 app.use(cors());
 
-app.use(userRouter);
+app.use('/user',userRouter);
+app.use('/expense',expenseRouter);
 
 db.sync()
 .then(result=>{

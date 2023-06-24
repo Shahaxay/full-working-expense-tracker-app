@@ -1,0 +1,34 @@
+const Expense=require('../models/expense');
+
+exports.postAddExpense=async (req,res,next)=>{
+    let {expenseAmount,description,category}=req.body;
+    console.log(expenseAmount,description,category);
+    try{
+        const result=await Expense.create({expenseAmount,description,category});
+        res.status(200).json({id:result.id});
+    }
+    catch(err){
+        console.log(err.message);
+    }
+}
+exports.getExpenses=async (req,res,next)=>{
+    try{
+        const expenses=await Expense.findAll();
+        res.status(200).json(expenses);
+    }
+    catch(err){
+        console.log(err.message);
+    }
+} 
+
+exports.deleteExpense=async(req,res,next)=>{
+    try{
+        const expenseId=req.params.expenseId;
+        const expense=await Expense.findByPk(expenseId);
+        const result=await expense.destroy();
+        res.status(200).json({success:true});
+    }
+    catch(err){
+        console.log(err.message);
+    }
+}
