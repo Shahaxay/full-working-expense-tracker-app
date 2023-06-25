@@ -1,4 +1,4 @@
-const { where } = require('sequelize');
+const User=require('../models/users');
 const Expense=require('../models/expense');
 
 exports.postAddExpense=async (req,res,next)=>{

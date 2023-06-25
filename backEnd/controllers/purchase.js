@@ -1,6 +1,7 @@
 const razorpay=require('razorpay');
 
 const Order=require('../models/order');
+const User=require('../models/users');
 
 const dotenv=require('dotenv');
 const { or } = require('sequelize');
@@ -31,15 +32,46 @@ exports.getPurchasePremium=async(req,res,next)=>{
         }
     })
 }
-exports.postUpdatePremium=async(req,res,next)=>{
+exports.postUpdatePremium=(req,res,next)=>{
     let {order_id,payment_id}=req.body;
-    const order=await req.user.getOrders({where:{order_id:order_id}});
-    order[0].payment_id=payment_id;
-    order[0].order_status="success";
-    order[0].save();
-
-    //update the ispremiumuser column of user
-    req.user.ispremiumuser=true;
-    req.user.save();
-    res.json({"status":"success"});
+    Order.findOne({where:{order_id:order_id}})
+    .then(order=>{
+        const promise1=order.update({payment_id:payment_id,order_status:"success"});
+        const promise2=req.user.update({ispremiumuser:1});
+        Promise.all([promise1,promise2])
+        .then(result=>{
+            console.log(result);
+            res.json({"status":"success"});
+        })
+        .catch(err=>console.log(err));
+    })
+    .catch(err=>console.log(err));
 }
+
+// exports.postUpdatePremium=async(req,res,next)=>{
+//     let {order_id,payment_id}=req.body;
+//     const order=await req.user.getOrders({where:{order_id:order_id}});
+//     order[0].payment_id=payment_id;
+//     order[0].order_status="success";
+//     order[0].save();
+
+//     //update the ispremiumuser column of user
+//     req.user.ispremiumuser=true;
+//     req.user.save();
+//     res.json({"status":"success"});
+// }
+
+// exports.postUpdatePremium=async(req,res,next)=>{
+//     let {order_id,payment_id}=req.body;
+//     try{
+//         const order=await req.user.getOrders({where:{order_id:order_id}});
+//         await order[0].update({payment_id:payment_id,order_status:"success"});
+    
+//         //update the ispremiumuser column of user
+//         await req.user.update({ispremiumuser:'true'});
+//         res.json({"status":"success"});
+//     }
+//     catch(err){console.log(err.message)};
+// }
+
+
