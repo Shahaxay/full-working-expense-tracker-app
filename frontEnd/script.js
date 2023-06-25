@@ -50,6 +50,7 @@ try{
                 showMessage('password wrong','red');
             }else if(result.data.success==="true"){
                 showMessage(result.data.message,'green');
+                localStorage.setItem('token',result.data.token);
                 window.location.href = './index.html';
             }
         }catch(err){
@@ -84,7 +85,7 @@ try{
             category:cat.value
         }
         try{
-            const result=await axios.post('http://localhost:3000/expense/addExpense',obj);
+            const result=await axios.post('http://localhost:3000/expense/addExpense',obj,{headers:{token:localStorage.getItem("token")}});
             obj.id=result.data.id;
             displayExpense(obj);
         }
@@ -115,7 +116,7 @@ function displayExpense(obj){
 try{
     window.addEventListener('DOMContentLoaded',async ()=>{
         try{
-            let expenseArray=await axios.get('http://localhost:3000/expense/getExpenses');
+            let expenseArray=await axios.get('http://localhost:3000/expense/getExpenses',{headers:{token:localStorage.getItem("token")}});
             // console.log(expenseArray);
             for(let expense of expenseArray.data){
                 displayExpense(expense);
@@ -131,7 +132,7 @@ addProduct_dest.addEventListener('click',async(e)=>{
     if(e.target.classList.contains('delete')){
         try{
             e.target.parentElement.remove();
-            let expense=await axios.delete('http://localhost:3000/expense/deleteExpense/'+e.target.dataset.id);
+            let expense=await axios.delete('http://localhost:3000/expense/deleteExpense/'+e.target.dataset.id,{headers:{token:localStorage.getItem("token")}});
             console.log(expense);
         }
         catch(err){

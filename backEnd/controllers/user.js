@@ -1,4 +1,5 @@
 const bcrypt=require('bcrypt');
+const jsonwebtoken=require('jsonwebtoken');
 
 const User=require('../models/users');
 
@@ -37,7 +38,7 @@ exports.postLogin=async(req,res,next)=>{
                 throw new Error("Something went wrong");
             }
             else if(results){
-                res.status(200).json({success:"true",message:"logged in successfully"});
+                res.status(200).json({success:"true",message:"logged in successfully",token:generateToken(result[0].id,result[0].name)});
             }else{
                 res.status(401).json({success:"false",message:'User not authorized'});
             }
@@ -47,4 +48,10 @@ exports.postLogin=async(req,res,next)=>{
     catch(err){
         console.log(err);
     }
+}
+
+//generating token to know users
+function generateToken(id,userName){
+    const token=jsonwebtoken.sign({userId:id,userName:userName},'this_is_my_secret_key');
+    return token;
 }
