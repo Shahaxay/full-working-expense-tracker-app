@@ -9,9 +9,14 @@ var amount=document.getElementById('amount');
 var desc=document.getElementById('desc');
 var cat=document.getElementById('cat');
 var addExpenseForm=document.getElementById('addProduct');
-var addProduct_dest=document.getElementById('addProduct_dest');
+var addExpense_dest=document.getElementById('addExpense_dest');
 var buyPremiumButton=document.getElementById('buyPremiumButton');
+var premium_user_dest=document.getElementById('premium_user_dest');
+var leaderboard_btn=document.getElementById('show-leaderboard-btn');
+var leaderboard=document.getElementById('leaderboard');
+var leaderboard_item=document.getElementById('liaderboard_item');
 
+   
 //signup form
 try{
     SignupForm.addEventListener('submit',async (e)=>{
@@ -110,7 +115,7 @@ function displayExpense(obj){
     deleteButton.setAttribute('data-id',obj.id);
     newEle.appendChild(deleteButton);
     //displaying to the screen
-    addProduct_dest.appendChild(newEle);
+    addExpense_dest.appendChild(newEle);
     addExpenseForm.reset();
 }
 
@@ -119,7 +124,9 @@ try{
         try{
             let result=await axios.get('http://localhost:3000/expense/getExpenses',{headers:{token:localStorage.getItem("token")}});
             //removind buy premium button for premium user
-            if(result.data.isPremiumUser){buyPremiumButton.remove();}
+            if(result.data.isPremiumUser){
+                premiumFeatures();
+            }
             for(let expense of result.data.expenses){
                 displayExpense(expense);
             }
@@ -130,18 +137,22 @@ try{
 catch(err){};
 
 //delete expense
-addProduct_dest.addEventListener('click',async(e)=>{
-    if(e.target.classList.contains('delete')){
-        try{
-            e.target.parentElement.remove();
-            let expense=await axios.delete('http://localhost:3000/expense/deleteExpense/'+e.target.dataset.id,{headers:{token:localStorage.getItem("token")}});
-            console.log(expense);
+try{
+    addExpense_dest.addEventListener('click',async(e)=>{
+        if(e.target.classList.contains('delete')){
+            try{
+                e.target.parentElement.remove();
+                let expense=await axios.delete('http://localhost:3000/expense/deleteExpense/'+e.target.dataset.id,{headers:{token:localStorage.getItem("token")}});
+                console.log(expense);
+            }
+            catch(err){
+                console.log(err.message);
+            }
         }
-        catch(err){
-            console.log(err.message);
-        }
-    }
-}) 
+    }) 
+}
+catch(err){};
+
 //buy premium
 try{
     buyPremiumButton.addEventListener('click',async (e)=>{
@@ -155,7 +166,8 @@ try{
                     await axios.post('http://localhost:3000/purchase/update-premium',{order_id:option.order_id,payment_id:response1.razorpay_payment_id},{headers:{token:localStorage.getItem("token")}});
                     alert("now you are premium user");
                     //removing buy premium button 
-                    buyPremiumButton.remove();
+                    premiumFeatures();
+                    
                 }
                 catch(err){
                     console.log(err.message);
@@ -175,7 +187,7 @@ try{
         }
     
         const rzp=new Razorpay(option);
-        
+
         rzp.open(); //this is the method to call razorpay frontend
 
         // e.preventDefault();// it is necessary if button is of type submit
@@ -187,4 +199,39 @@ try{
     })
 }
 catch(err){};
+
+function premiumFeatures(){
+    buyPremiumButton.remove();
+    premium_user_dest.textContent='You are a premium user';
+    leaderboard_btn.removeAttribute('hidden');
+}
+
+leaderboard_btn.addEventListener('click',async ()=>{
+    leaderboard.removeAttribute('hidden');
+    try{
+        const leaderBoards_items=await axios.get('http://localhost:3000/premium/showLeaderBoard',{headers:{token:localStorage.getItem('token')}});
+        console.log(leaderBoards_items);
+        for(let item of leaderBoards_items.data){
+            addLeaderBoardItem(item);
+        }
+    }
+    catch(err){
+        console.log(">>>>>>>>>>>>>>>>>>");
+        console.log(err);
+    }
+
+})
+
+function addLeaderBoardItem(obj){
+    let text='Name - '+obj.name+" - Total Expenses - "+obj.totalExpenses;
+    var textNode=document.createTextNode(text);
+    var newEle=document.createElement('li');
+    newEle.appendChild(textNode);
+    leaderboard_item.appendChild(newEle);
+}
+// var obj={name:"akshay",totalExpense:1000};
+// addLeaderBoardItem(obj);
+
+
+
 
