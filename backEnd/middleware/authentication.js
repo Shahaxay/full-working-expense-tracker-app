@@ -9,6 +9,7 @@ exports.authenticate=async (req,res,next)=>{
     }
     catch(err){
         console.log(err.message);
+        console.log("not a valid user");
     }
     next();
 }

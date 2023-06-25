@@ -5,8 +5,10 @@ const cors=require('cors');
 const db=require('./util/database')
 const userRouter=require('./routes/user');
 const expenseRouter=require('./routes/expense');
+const purchaseRoute=require('./routes/purchase');
 const Expence=require('./models/expense');
 const User=require('./models/users');
+const Order=require('./models/order');
 const authentication=require('./middleware/authentication');
 
 
@@ -21,8 +23,13 @@ app.use(authentication.authenticate);
 
 app.use('/expense',expenseRouter);
 
+app.use('/purchase',purchaseRoute);
+
 User.hasMany(Expence);
 Expence.belongsTo(User);
+
+User.hasMany(Order);
+Order.belongsTo(User);
 
 // db.sync({force:true})
 db.sync()

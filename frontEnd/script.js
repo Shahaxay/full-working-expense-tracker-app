@@ -10,6 +10,7 @@ var desc=document.getElementById('desc');
 var cat=document.getElementById('cat');
 var addExpenseForm=document.getElementById('addProduct');
 var addProduct_dest=document.getElementById('addProduct_dest');
+var buyPremiumButton=document.getElementById('buyPremiumButton');
 
 //signup form
 try{
@@ -116,9 +117,10 @@ function displayExpense(obj){
 try{
     window.addEventListener('DOMContentLoaded',async ()=>{
         try{
-            let expenseArray=await axios.get('http://localhost:3000/expense/getExpenses',{headers:{token:localStorage.getItem("token")}});
-            // console.log(expenseArray);
-            for(let expense of expenseArray.data){
+            let result=await axios.get('http://localhost:3000/expense/getExpenses',{headers:{token:localStorage.getItem("token")}});
+            //removind buy premium button for premium user
+            if(result.data.isPremiumUser){buyPremiumButton.remove();}
+            for(let expense of result.data.expenses){
                 displayExpense(expense);
             }
         }
@@ -140,5 +142,49 @@ addProduct_dest.addEventListener('click',async(e)=>{
         }
     }
 }) 
+//buy premium
+try{
+    buyPremiumButton.addEventListener('click',async (e)=>{
+        const response=await axios.get('http://localhost:3000/purchase/purchase-premium',{headers:{token:localStorage.getItem("token")}});
+        // console.log(response.data);
+        var option={
+            "key":response.data.key_id,
+            "order_id":response.data.order_id,
+            "handler": async function(response1){
+                try{
+                    await axios.post('http://localhost:3000/purchase/update-premium',{order_id:option.order_id,payment_id:response1.razorpay_payment_id},{headers:{token:localStorage.getItem("token")}});
+                    alert("now you are premium user");
+                    //removing buy premium button 
+                    buyPremiumButton.remove();
+                }
+                catch(err){
+                    console.log(err.message);
+                }
+            }
+            // ,
+            // prefill:{
+            //     name:"Akshay Kumar sah",
+            //     constact:"1234567890",
+            //     email:"shahaxay34@gmail.com"
+            // },
+            // receipt:"receipt#1",
+            // notes:{
+            //     date:"today",
+            //     time:'evening'
+            // }
+        }
+    
+        const rzp=new Razorpay(option);
+        
+        rzp.open(); //this is the method to call razorpay frontend
 
+        // e.preventDefault();// it is necessary if button is of type submit
+
+        rzp.on('payment.failed',(response)=>{
+            console.log(response);
+            alert("something went wrong")
+        })
+    })
+}
+catch(err){};
 
