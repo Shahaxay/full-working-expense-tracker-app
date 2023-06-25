@@ -94,6 +94,9 @@ try{
             const result=await axios.post('http://localhost:3000/expense/addExpense',obj,{headers:{token:localStorage.getItem("token")}});
             obj.id=result.data.id;
             displayExpense(obj);
+            //refresh leaderboard
+            showLeaderBoard();
+            
         }
         catch(err){
             console.log(err.message);
@@ -144,6 +147,8 @@ try{
                 e.target.parentElement.remove();
                 let expense=await axios.delete('http://localhost:3000/expense/deleteExpense/'+e.target.dataset.id,{headers:{token:localStorage.getItem("token")}});
                 console.log(expense);
+                //refresh leaderboard
+                showLeaderBoard();
             }
             catch(err){
                 console.log(err.message);
@@ -208,22 +213,24 @@ function premiumFeatures(){
 
 try{
 
-    leaderboard_btn.addEventListener('click',async ()=>{
-        leaderboard.removeAttribute('hidden');
-        try{
-            const leaderBoards_items=await axios.get('http://localhost:3000/premium/showLeaderBoard',{headers:{token:localStorage.getItem('token')}});
-            console.log(leaderBoards_items);
-            for(let item of leaderBoards_items.data){
-                addLeaderBoardItem(item);
-            }
-        }
-        catch(err){
-            console.log(err);
-        }
-    
-    })
+    leaderboard_btn.addEventListener('click',showLeaderBoard)
 }
 catch(err){};
+async function showLeaderBoard (){
+    leaderboard.removeAttribute('hidden');
+    try{
+        const leaderBoards_items=await axios.get('http://localhost:3000/premium/showLeaderBoard',{headers:{token:localStorage.getItem('token')}});
+        // console.log(leaderBoards_items);
+        leaderboard_item.innerHTML="";
+        for(let item of leaderBoards_items.data){
+            addLeaderBoardItem(item);
+        }
+    }
+    catch(err){
+        console.log(err);
+    }
+
+}
 
 function addLeaderBoardItem(obj){
     let text='Name - '+obj.name+" - Total Expenses - "+obj.totalExpenses;

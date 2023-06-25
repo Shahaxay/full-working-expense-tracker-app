@@ -28,6 +28,9 @@ exports.deleteExpense=async(req,res,next)=>{
         const expenseId=req.params.expenseId;
         const expense=await req.user.getExpenses
         ({where:{id:expenseId}});
+        //updating totalExpense
+        let totalExpense=req.user.totalExpenses-parseInt(expense[0].expenseAmount);
+        await req.user.update({totalExpenses:totalExpense});
         // const expense=await Expense.findByPk(expenseId);
         await expense[0].destroy();
         res.status(200).json({success:true});
