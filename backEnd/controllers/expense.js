@@ -1,11 +1,11 @@
-const User=require('../models/users');
-const Expense=require('../models/expense');
-
 exports.postAddExpense=async (req,res,next)=>{
     let {expenseAmount,description,category}=req.body;
     console.log(expenseAmount,description,category);
     try{
         const result=await req.user.createExpense({expenseAmount,description,category});
+        // console.log(req.user.totalExpenses);
+        let totalExpense=req.user.totalExpenses+parseInt(expenseAmount);
+        await req.user.update({totalExpenses:totalExpense});
         res.status(200).json({id:result.id});
     }
     catch(err){
@@ -35,4 +35,4 @@ exports.deleteExpense=async(req,res,next)=>{
     catch(err){
         console.log(err.message);
     }
-}
+} 

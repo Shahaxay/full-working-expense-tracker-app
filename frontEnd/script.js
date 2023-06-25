@@ -206,21 +206,24 @@ function premiumFeatures(){
     leaderboard_btn.removeAttribute('hidden');
 }
 
-leaderboard_btn.addEventListener('click',async ()=>{
-    leaderboard.removeAttribute('hidden');
-    try{
-        const leaderBoards_items=await axios.get('http://localhost:3000/premium/showLeaderBoard',{headers:{token:localStorage.getItem('token')}});
-        console.log(leaderBoards_items);
-        for(let item of leaderBoards_items.data){
-            addLeaderBoardItem(item);
-        }
-    }
-    catch(err){
-        console.log(">>>>>>>>>>>>>>>>>>");
-        console.log(err);
-    }
+try{
 
-})
+    leaderboard_btn.addEventListener('click',async ()=>{
+        leaderboard.removeAttribute('hidden');
+        try{
+            const leaderBoards_items=await axios.get('http://localhost:3000/premium/showLeaderBoard',{headers:{token:localStorage.getItem('token')}});
+            console.log(leaderBoards_items);
+            for(let item of leaderBoards_items.data){
+                addLeaderBoardItem(item);
+            }
+        }
+        catch(err){
+            console.log(err);
+        }
+    
+    })
+}
+catch(err){};
 
 function addLeaderBoardItem(obj){
     let text='Name - '+obj.name+" - Total Expenses - "+obj.totalExpenses;
@@ -229,8 +232,6 @@ function addLeaderBoardItem(obj){
     newEle.appendChild(textNode);
     leaderboard_item.appendChild(newEle);
 }
-// var obj={name:"akshay",totalExpense:1000};
-// addLeaderBoardItem(obj);
 
 
 

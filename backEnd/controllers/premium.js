@@ -1,20 +1,13 @@
-const sequelize=require('sequelize');
-
-const Expense=require('../models/expense');
 const User = require('../models/users');
 
 exports.getLeaderBoard=async(req,res,next)=>{
     try{
-        const newJoinedExpenses=await User.findAll({
-            attributes:['id','name',[sequelize.fn('sum', sequelize.col('expenseAmount')), 'totalExpenses']],
-            include:{
-                model:Expense,
-                attributes:[]
-            },
-            group:['users.id'],
-            order:[[sequelize.literal('totalExpenses'),'DESC']]
+        const requiredResult=await User.findAll({
+            attributes:['name','totalExpenses'],
+            order:[['totalExpenses','DESC']]
         })
-        res.json(newJoinedExpenses);
+        // console.log(requiredResult);
+        res.json(requiredResult);
     }
     catch(err){
         console.log(err);
