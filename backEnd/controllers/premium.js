@@ -5,17 +5,16 @@ const User = require('../models/users');
 
 exports.getLeaderBoard=async(req,res,next)=>{
     try{
-        const expenses=await Expense.findAll({
-            attributes: ['userId',[sequelize.fn('sum', sequelize.col('expenseAmount')), 'totalExpenses']],
-            group: ['userId'],
-            order: [[sequelize.literal('totalExpenses'),'DESC']]
-        });
-        for(let expense of expenses){
-            const obj=await User.findOne({where:{id:expense.userId}});
-            expense.dataValues.name=obj.name;
-        }
-        // console.log(expenses);
-        res.json(expenses);
+        const newJoinedExpenses=await User.findAll({
+            attributes:['id','name',[sequelize.fn('sum', sequelize.col('expenseAmount')), 'totalExpenses']],
+            include:{
+                model:Expense,
+                attributes:[]
+            },
+            group:['users.id'],
+            order:[[sequelize.literal('totalExpenses'),'DESC']]
+        })
+        res.json(newJoinedExpenses);
     }
     catch(err){
         console.log(err);
