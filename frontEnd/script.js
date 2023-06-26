@@ -144,8 +144,8 @@ try{
     addExpense_dest.addEventListener('click',async(e)=>{
         if(e.target.classList.contains('delete')){
             try{
-                e.target.parentElement.remove();
                 let expense=await axios.delete('http://localhost:3000/expense/deleteExpense/'+e.target.dataset.id,{headers:{token:localStorage.getItem("token")}});
+                e.target.parentElement.remove();
                 console.log(expense);
                 //refresh leaderboard
                 showLeaderBoard();
