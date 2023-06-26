@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker login</title>
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
@@ -22,6 +23,16 @@
     <label for="login">New user?</label>
     <a href="http://127.0.0.1:5500/full-stack-expense-tracker-app/frontEnd/signup.html" id="login">
     <button>Signup Now</button></a>
+    <label for="forgetPassword">Forget Password? </label>
+    <button id="forgetPassword">reset password</button>
+    <div id="dialog" class="dialog">
+        <h1>Forget Password</h1>
+        <form id="forgetPasswordForm"><hr><br>
+            <label for="yourEmail">Email:</label>
+            <input type="email" id="yourEmail"><br><br>
+            <button type="submit">Get reset link</button>
+        </form>
+    </div>
     <span id="dest"></span>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js" integrity="sha512-uMtXmF28A2Ab/JJO2t/vYhlaa/3ahUOgj1Zf27M5rOo8/+fcTUVH0/E0ll68njmjrLqOBjXM3V9NiPFL5ywWPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="./script.js"></script>

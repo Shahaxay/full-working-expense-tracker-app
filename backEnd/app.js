@@ -7,6 +7,7 @@ const userRouter=require('./routes/user');
 const expenseRouter=require('./routes/expense');
 const purchaseRoute=require('./routes/purchase');
 const premiumRoute=require('./routes/premium');
+const passwordRouter=require('./routes/password');
 const Expence=require('./models/expense');
 const User=require('./models/users');
 const Order=require('./models/order');
@@ -18,7 +19,10 @@ const app=express();
 app.use(bodyParser.json({extended:false}));
 app.use(cors());
 
+
 app.use('/user',userRouter);
+
+app.use('/password',passwordRouter);
 
 app.use(authentication.authenticate);
 
@@ -27,6 +31,7 @@ app.use('/expense',expenseRouter);
 app.use('/purchase',purchaseRoute);
 
 app.use('/premium',premiumRoute);
+
 
 User.hasMany(Expence);
 Expence.belongsTo(User);

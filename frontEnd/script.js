@@ -4,6 +4,12 @@ var password=document.getElementById('password');
 var SignupForm=document.getElementById('frm');
 var loginForm=document.getElementById('loginForm');
 var dest=document.getElementById('dest');
+//login page
+var forgetPassword=document.getElementById('forgetPassword');
+var forgetPasswordForm=document.getElementById('forgetPasswordForm');
+var dialog=document.getElementById('dialog');
+var resetEmail=document.getElementById('yourEmail');
+
 //index page
 var amount=document.getElementById('amount');
 var desc=document.getElementById('desc');
@@ -239,6 +245,29 @@ function addLeaderBoardItem(obj){
     newEle.appendChild(textNode);
     leaderboard_item.appendChild(newEle);
 }
+
+try{
+    forgetPassword.addEventListener('click',()=>{
+        // alert("i");
+        dialog.style.display='block';
+    })
+    forgetPasswordForm.addEventListener('submit',async(e)=>{
+        e.preventDefault();
+        dialog.style.display='none';
+        let obj={
+            resetEmail:resetEmail.value
+        }
+        try{
+            const result=await axios.post('http://localhost:3000/password/reset-password',obj);
+        }
+        catch(err){
+            console.log(err);
+        }
+        
+
+    })
+}
+catch(err){}
 
 
 
