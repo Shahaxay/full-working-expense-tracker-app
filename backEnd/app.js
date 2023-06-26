@@ -11,12 +11,14 @@ const passwordRouter=require('./routes/password');
 const Expence=require('./models/expense');
 const User=require('./models/users');
 const Order=require('./models/order');
+const ForgetPasswordRequest=require('./models/forgetPasswordRequest');
 const authentication=require('./middleware/authentication');
 
 
 const app=express();
 
 app.use(bodyParser.json({extended:false}));
+app.use(bodyParser.urlencoded({extended:false}));
 app.use(cors());
 
 
@@ -24,13 +26,13 @@ app.use('/user',userRouter);
 
 app.use('/password',passwordRouter);
 
-app.use(authentication.authenticate);
+// app.use(authentication.authenticate);
 
-app.use('/expense',expenseRouter);
+app.use('/expense',authentication.authenticate,expenseRouter);
 
-app.use('/purchase',purchaseRoute);
+app.use('/purchase',authentication.authenticate,purchaseRoute);
 
-app.use('/premium',premiumRoute);
+app.use('/premium',authentication.authenticate,premiumRoute);
 
 
 User.hasMany(Expence);
@@ -39,8 +41,11 @@ Expence.belongsTo(User);
 User.hasMany(Order);
 Order.belongsTo(User);
 
+User.hasMany(ForgetPasswordRequest);
+ForgetPasswordRequest.belongsTo(User);
+
 // db.sync({force:true})
-db.sync()
+db.sync() 
 .then(result=>{ 
     app.listen(3000,()=>console.log("listening to port 3000..."))
 })

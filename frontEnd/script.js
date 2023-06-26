@@ -181,7 +181,7 @@ try{
                     
                 }
                 catch(err){
-                    console.log(err.message);
+                    console.log(err);
                 }
             }
             // ,
@@ -259,12 +259,11 @@ try{
         }
         try{
             const result=await axios.post('http://localhost:3000/password/reset-password',obj);
+            // localStorage.setItem('forgetPasswordRequestId',result.data.forgetPasswordRequestId);
         }
         catch(err){
             console.log(err);
         }
-        
-
     })
 }
 catch(err){}
