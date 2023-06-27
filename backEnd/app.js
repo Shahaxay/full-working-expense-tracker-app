@@ -12,6 +12,7 @@ const Expence=require('./models/expense');
 const User=require('./models/users');
 const Order=require('./models/order');
 const ForgetPasswordRequest=require('./models/forgetPasswordRequest');
+const ExpenseReportLink=require('./models/expenseReportLink');
 const authentication=require('./middleware/authentication');
 
 
@@ -43,6 +44,9 @@ Order.belongsTo(User);
 
 User.hasMany(ForgetPasswordRequest);
 ForgetPasswordRequest.belongsTo(User);
+
+User.hasMany(ExpenseReportLink);
+ExpenseReportLink.belongsTo(User,);
 
 // db.sync({force:true})
 db.sync() 

@@ -1,9 +1,10 @@
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
-const AWS = require('aws-sdk');
 const dotenv = require('dotenv');
 
 const User = require('../models/users');
+const UserService=require('../services/userService');
+const AwsS3Service=require('../services/awsS3Service');
 
 dotenv.config();
 
@@ -69,11 +70,14 @@ const getDownloadReport = async (req, res, next) => {
                 const filename = `Expense/${req.user.id}${new Date()}.txt`;
                 const expenses = await req.user.getExpenses();
                 const data = JSON.stringify(expenses);
-                const fileURL=await uploadToS3(data,filename);
+                const fileURL=await AwsS3Service.uploadToS3(data,filename);
+                //updating expenseReportLink model
+                await req.user.createExpenseReportLink({reports:fileURL});
                 res.status(200).json({success:true,fileURL:fileURL});
             }
             catch(err){
-                res.status(200).json({success:true,fileURL:result.Location});
+                console.log(err);
+                res.status(400).json({message:'something went wrong',success:false,fileURL:''});
             }
         } else {
             res.status(400).json({ message: 'get premium to download reports', success: 'false' });
@@ -84,36 +88,22 @@ const getDownloadReport = async (req, res, next) => {
     }
 }
 
-function uploadToS3(data, filename) {
-    const BUCKET_NAME = 'expense-tracking-app-akshay';
 
-            const bucketS3 = new AWS.S3({
-                accessKeyId: process.env.IAM_USER_ACCESS_KEY,
-                secretAccessKey: process.env.IAM_USER_SECRET_ACCESS_KEY
-            });
-
-            const params = {
-                Bucket: BUCKET_NAME,
-                Key: filename,
-                Body: data,
-                ACL: 'public-read'
-            };
-            console.log(data);
-            return new Promise((resolve,reject)=>{
-                bucketS3.upload(params, (err, result) => {
-                if (err) {
-                    console.log(err);
-                    reject(err);
-                } else {
-                    console.log(result);
-                    resolve(result.Location);
-                }
-            })
-        });
+const getExpenseReports=async (req,res,next)=>{
+    try{
+        const reports=await UserService.getExpenseReportLinks(req);
+        // console.log(reports);
+        res.status(200).json({reports});
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).json({sataus:false,message:'cannot get expense reports'})
+    }
 }
 
 module.exports = {
     postSignup,
     postLogin,
-    getDownloadReport
+    getDownloadReport,
+    getExpenseReports
 };

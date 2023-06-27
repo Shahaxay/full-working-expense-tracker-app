@@ -30,3 +30,7 @@ table,td,th{
     width: 80%;
     height: 300px;
 }
+
+#reports_dest{
+    width: 100%;
+}
