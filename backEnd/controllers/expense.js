@@ -10,7 +10,7 @@ exports.postAddExpense=async (req,res,next)=>{
         let totalExpense=req.user.totalExpenses+parseInt(expenseAmount);
         await req.user.update({totalExpenses:totalExpense},{transaction:transaction1});
         await transaction1.commit();
-        res.status(200).json({id:result.id});
+        res.status(200).json({id:result.id,premium:req.user.ispremiumuser});
     }
     catch(err){
         await transaction1.rollback();

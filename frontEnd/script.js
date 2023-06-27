@@ -5,7 +5,7 @@ var SignupForm=document.getElementById('frm');
 var loginForm=document.getElementById('loginForm');
 var dest=document.getElementById('dest');
 //login page
-var forgetPassword=document.getElementById('forgetPassword');
+var forgetPasswordBtn=document.getElementById('forgetPasswordBtn');
 var forgetPasswordForm=document.getElementById('forgetPasswordForm');
 var dialog=document.getElementById('dialog');
 var resetEmail=document.getElementById('yourEmail');
@@ -21,7 +21,12 @@ var premium_user_dest=document.getElementById('premium_user_dest');
 var leaderboard_btn=document.getElementById('show-leaderboard-btn');
 var leaderboard=document.getElementById('leaderboard');
 var leaderboard_item=document.getElementById('liaderboard_item');
-
+var view_report_btn=document.getElementById('view-report-btn');
+var expense_analysis_button_group=document.getElementById('expense-analyse-button-group');
+var daily_expense_btn=document.getElementById('daily-expense-btn');
+var weekly_expense_btn=document.getElementById('weekly-expense-btn');
+var monthly_expense_btn=document.getElementById('monthly-expense-btn');
+var expense_analysis_ifrme=document.getElementById('iframe');
    
 //signup form
 try{
@@ -100,8 +105,10 @@ try{
             const result=await axios.post('http://localhost:3000/expense/addExpense',obj,{headers:{token:localStorage.getItem("token")}});
             obj.id=result.data.id;
             displayExpense(obj);
-            //refresh leaderboard
-            showLeaderBoard();
+            //refresh leaderboard if only premium user
+            if(result.data.premium){
+                showLeaderBoard();
+            }
             
         }
         catch(err){
@@ -215,6 +222,9 @@ function premiumFeatures(){
     buyPremiumButton.remove();
     premium_user_dest.textContent='You are a premium user';
     leaderboard_btn.removeAttribute('hidden');
+    view_report_btn.removeAttribute('hidden');
+    expense_analysis_button_group.removeAttribute('hidden');
+
 }
 
 try{
@@ -246,8 +256,9 @@ function addLeaderBoardItem(obj){
     leaderboard_item.appendChild(newEle);
 }
 
+//showing dialog box for taking email
 try{
-    forgetPassword.addEventListener('click',()=>{
+    forgetPasswordBtn.addEventListener('click',()=>{
         // alert("i");
         dialog.style.display='block';
     })
@@ -258,13 +269,37 @@ try{
             resetEmail:resetEmail.value
         }
         try{
+            //sending request to server to send reset link to given email id if user exist
             const result=await axios.post('http://localhost:3000/password/reset-password',obj);
-            // localStorage.setItem('forgetPasswordRequestId',result.data.forgetPasswordRequestId);
+            alert(result.data.message);
         }
         catch(err){
             console.log(err);
         }
     })
+}
+catch(err){}
+
+//view report
+try{
+    view_report_btn.addEventListener('click',()=>{
+        window.location.href='./report.html'
+    })
+}
+catch(err){};
+
+//expense analysis
+try{
+    daily_expense_btn.onclick=()=>{
+        console.log('click');
+        expense_analysis_ifrme.setAttribute('src','./dailyExpenseAnalysis.html');
+    }
+    weekly_expense_btn.onclick=()=>{
+        expense_analysis_ifrme.setAttribute('src','./weeklyExpenseAnalysis.html');
+    }
+    monthly_expense_btn.onclick=()=>{
+        expense_analysis_ifrme.setAttribute('src','./monthlyExpenseAnalysis.html');
+    }
 }
 catch(err){}
 

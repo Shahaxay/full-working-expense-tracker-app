@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Home Page</title>
+    <link rel="stylesheet" href="./style.css">
 </head>
 <body>
     <h1>Add Expense</h1>
@@ -23,6 +24,15 @@
         <button id="buyPremiumButton">Buy Premium</button>
         <span id="premium_user_dest"></span>
         <button hidden id="show-leaderboard-btn">show leaderboard</button>
+        <button id="view-report-btn" hidden>View Report</button>
+        <div id="expense-analyse-button-group" hidden>
+            <p>View Expense On The Basis:</p>
+            <button id="daily-expense-btn">Daily</button>
+            <button id="weekly-expense-btn">Weakly</button>
+            <button id="monthly-expense-btn">Monthly</button>
+            <br>
+            <iframe id="iframe" src="./dailyExpenseAnalysis.html"></iframe>
+        </div>
 
         <h1>Expenses</h1>
         <ul id="addExpense_dest"></ul>
