@@ -8,7 +8,7 @@ const dotenv=require('dotenv');
 dotenv.config();
 
 
-exports.getPurchasePremium=async(req,res,next)=>{
+const getPurchasePremium=async(req,res,next)=>{
     //creating object of rezorpay
     let rez=new razorpay({
         key_id : process.env.RAZORPAY_KEY_ID,
@@ -19,6 +19,7 @@ exports.getPurchasePremium=async(req,res,next)=>{
     // creating order on rezorpay
     rez.orders.create({amount:amount,currency:'INR'},async (err,order)=>{
         if(err){
+            res.status(500).json(err);
             console.log(err);
         }else{
             // res.json(order);
@@ -27,12 +28,13 @@ exports.getPurchasePremium=async(req,res,next)=>{
                 res.json({key_id:process.env.RAZORPAY_KEY_ID,order_id:order.id});
             }
             catch(err){
+                res.status(500).json({key_id:'',order_id:'',success:false});
                 console.log(err.message);
             }
         }
     })
 }
-exports.postUpdatePremium=async (req,res,next)=>{
+const postUpdatePremium=async (req,res,next)=>{
     const transac=await sequelize.transaction();
     try{
         let {order_id,payment_id}=req.body;
@@ -50,5 +52,10 @@ exports.postUpdatePremium=async (req,res,next)=>{
         res.status(400).json(err);
     }
 } 
+
+module.exports={
+    postUpdatePremium,
+    getPurchasePremium
+};
 
 

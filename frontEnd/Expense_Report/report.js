@@ -1,22 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Income Report</title>
-    <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-    <h1 class="report_center">Expense Tracker App</h1>
-    <h6 id="current_date"></h6>
-    <h4 id="year"></h4>
-    <h5 id="month_year"></h5>
-    <span id="monthly_table"></span>
-    <h5 class="report_center">Yearly Report</h5>
-    <span id="yearly_table"></span>
-    <button id="report_download">Download Report</button>
-    <script>
-        var current_date=document.getElementById('current_date');
+var current_date=document.getElementById('current_date');
         var year=document.getElementById('year');
         var month_year=document.getElementById('month_year');
         var monthly_table=document.getElementById('monthly_table')
@@ -127,7 +109,3 @@
         createYearlyTable([{month:'June',income:'10000',expense:'5000',saving:'5000'}]);
 
         createMonthlyTable([{date:'2020/20/2',description:'Apple',category:'food',income:'10000',expense:'5000'},{date:'2020/20/2',description:'Apple',category:'food',income:'10000',expense:'5000'}]);
-    </script>
-    
-</body>
-</html>
