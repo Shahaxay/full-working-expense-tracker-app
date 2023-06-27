@@ -16,20 +16,18 @@ var monthly_expense_btn = document.getElementById('monthly-expense-btn');
 var expense_analysis_ifrme = document.getElementById('iframe');
 var download_report_button = document.getElementById('download-report-btn');
 var reports_dest = document.getElementById('reports_dest');
+var paginationButtonHolder=document.getElementById('paginationButtonHolder');
+var pagination_btn=document.getElementById('pagination-btn');
 
 //listing all the expenses on load
 window.addEventListener('DOMContentLoaded', async () => {
     try {
-        let result = await axios.get('http://localhost:3000/expense/getExpenses', { headers: { token: localStorage.getItem("token") } });
-        //removind buy premium button for premium user
-        if (result.data.isPremiumUser) {
+        listExpenses(1);
+        let allExpenseReport = await axios.get('http://localhost:3000/user/getExpenseReports', { headers: { token: localStorage.getItem('token') } });
+        // console.log(allExpenseReport.data);
+        if (allExpenseReport.data.ispremiumuser) {
             premiumFeatures();
         }
-        for (let expense of result.data.expenses) {
-            displayExpense(expense);
-        }
-
-        let allExpenseReport = await axios.get('http://localhost:3000/user/getExpenseReports', { headers: { token: localStorage.getItem('token') } });
         for (let report of allExpenseReport.data.reports) {
             displayExpenseReport(report);
         }
@@ -39,7 +37,49 @@ window.addEventListener('DOMContentLoaded', async () => {
     };
 })
 
+async function listExpenses(page){
+    console.log(page);
+    let result = await axios.get(`http://localhost:3000/expense/getExpenses?page=${page}`, { headers: { token: localStorage.getItem("token") } });
+        //removing buy premium button for premium user
+        // console.log(result);
+        addExpense_dest.innerHTML="";
+        for (let expense of result.data.expenses) {
+            displayExpense(expense);
+        }
+        //show buttons
+        pagination(result.data);
+}
+
+function pagination(data){
+    console.log(data);
+    // if(data.expenses.length==0) return;
+    pagination_btn.innerHTML="";
+    let newEle=document.createElement('div');
+    newEle.setAttribute('id',"paginationButtonHolder");
+    if(data.hasPrevious){
+        let btn1=document.createElement('button');
+        btn1.textContent=data.previousPage;
+        btn1.addEventListener('click',()=>{listExpenses(data.previousPage)});
+        newEle.appendChild(btn1);
+    }
+    
+    let btn2=document.createElement('button');
+    btn2.textContent=data.currentPage;
+    btn2.addEventListener('click',()=>{listExpenses(data.currentPage)});
+    newEle.appendChild(btn2);
+    
+    if(data.hasNext){
+        let btn3=document.createElement('button');
+        btn3.textContent=data.nextPage;
+        btn3.addEventListener('click',()=>{listExpenses(data.nextPage)});
+        newEle.appendChild(btn3);
+
+    }
+    pagination_btn.appendChild(newEle);
+}
+
 //add expense
+var flag=false;
 addExpenseForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     var obj = {
@@ -49,8 +89,20 @@ addExpenseForm.addEventListener('submit', async (e) => {
     }
     try {
         const result = await axios.post('http://localhost:3000/expense/addExpense', obj, { headers: { token: localStorage.getItem("token") } });
-        obj.id = result.data.id;
-        displayExpense(obj);
+        const paginationLimit=result.data.paginationLimit;
+        const numberOfExpenses=result.data.numberOfExpense-1;
+        console.log(result);
+        //limiting the size in pagination
+        if(numberOfExpenses<paginationLimit){
+            obj.id = result.data.id;
+            displayExpense(obj);
+            flag=true;
+        }else if(flag){
+            //updating the pagination button
+            listExpenses(1);
+            flag=false;
+        }
+        addExpenseForm.reset();
         //refresh leaderboard if only premium user
         if (result.data.premium) {
             showLeaderBoard();

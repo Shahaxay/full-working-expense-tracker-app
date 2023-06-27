@@ -62,29 +62,23 @@ function generateToken(id, userName) {
 }
 
 const getDownloadReport = async (req, res, next) => {
-    try {
-
-        if (req.user.ispremiumuser) {
-            //send request to the AWS S3, upload and get link
-            try{
-                const filename = `Expense/${req.user.id}${new Date()}.txt`;
-                const expenses = await req.user.getExpenses();
-                const data = JSON.stringify(expenses);
-                const fileURL=await AwsS3Service.uploadToS3(data,filename);
-                //updating expenseReportLink model
-                await req.user.createExpenseReportLink({reports:fileURL});
-                res.status(200).json({success:true,fileURL:fileURL});
-            }
-            catch(err){
-                console.log(err);
-                res.status(400).json({message:'something went wrong',success:false,fileURL:''});
-            }
-        } else {
-            res.status(400).json({ message: 'get premium to download reports', success: 'false' });
+    if (req.user.ispremiumuser) {
+        //send request to the AWS S3, upload and get link
+        try{
+            const filename = `Expense/${req.user.id}${new Date()}.txt`;
+            const expenses = await req.user.getExpenses();
+            const data = JSON.stringify(expenses);
+            const fileURL=await AwsS3Service.uploadToS3(data,filename);
+            //updating expenseReportLink model
+            await req.user.createExpenseReportLink({reports:fileURL});
+            res.status(200).json({success:true,fileURL:fileURL});
         }
-    }
-    catch (err) {
-        console.log(err);
+        catch(err){
+            console.log(err);
+            res.status(400).json({message:'something went wrong',success:false,fileURL:''});
+        }
+    } else {
+        res.status(401).json({ message: 'get premium to download reports', success: 'false' });
     }
 }
 
@@ -93,7 +87,7 @@ const getExpenseReports=async (req,res,next)=>{
     try{
         const reports=await UserService.getExpenseReportLinks(req);
         // console.log(reports);
-        res.status(200).json({reports});
+        res.status(200).json({reports,ispremiumuser:req.user.ispremiumuser});
     }
     catch(err){
         console.log(err);

@@ -30,6 +30,11 @@ const User=sequelize.define('users',{
         type:Sequelize.INTEGER,
         defaultValue:0,
         allowNull:false
+    },
+    numberOfExpenses:{
+        type:Sequelize.INTEGER,
+        defaultValue:0,
+        allowNull:false
     }
 });
 

@@ -34,3 +34,7 @@ table,td,th{
 #reports_dest{
     width: 100%;
 }
+
+#paginationButtonHolder{
+    margin-left:5rem;
+}

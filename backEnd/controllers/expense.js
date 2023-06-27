@@ -1,5 +1,7 @@
 const sequelize=require('../util/database');
 
+const ITEMS_PER_PAGE=2;
+
 exports.postAddExpense=async (req,res,next)=>{
     const transaction1=await sequelize.transaction();
     let {expenseAmount,description,category}=req.body;
@@ -8,9 +10,10 @@ exports.postAddExpense=async (req,res,next)=>{
         const result=await req.user.createExpense({expenseAmount,description,category},{transaction:transaction1});
         // console.log(req.user.totalExpenses);
         let totalExpense=req.user.totalExpenses+parseInt(expenseAmount);
-        await req.user.update({totalExpenses:totalExpense},{transaction:transaction1});
+        let numberOfExpenses=req.user.numberOfExpenses+1;
+        await req.user.update({totalExpenses:totalExpense,numberOfExpenses:numberOfExpenses},{transaction:transaction1});
         await transaction1.commit();
-        res.status(200).json({id:result.id,premium:req.user.ispremiumuser});
+        res.status(200).json({id:result.id,premium:req.user.ispremiumuser,numberOfExpense:req.user.numberOfExpenses,paginationLimit:ITEMS_PER_PAGE});
     }
     catch(err){
         await transaction1.rollback();
@@ -19,10 +22,23 @@ exports.postAddExpense=async (req,res,next)=>{
     }
 }
 exports.getExpenses=async (req,res,next)=>{
+    const page=Number(req.query.page);
+    const TOTAL_NUMBER_OF_EXPENSES=req.user.numberOfExpenses;
     try{
         // const expenses=await Expense.findAll({where:{userId:req.user.id}});
-        const expenses=await req.user.getExpenses();
-        res.status(200).json({expenses,isPremiumUser:req.user.ispremiumuser});
+        const expenses=await req.user.getExpenses({
+            limit:ITEMS_PER_PAGE,
+            offset:(Number(page)-1)*ITEMS_PER_PAGE
+        });
+        const resObj={
+            expenses,
+            currentPage:page,
+            hasPrevious:page>1,
+            hasNext:(page*ITEMS_PER_PAGE)<TOTAL_NUMBER_OF_EXPENSES,
+            previousPage:page-1, 
+            nextPage:page+1
+        }
+        res.status(200).json(resObj);
     }
     catch(err){
         console.log(err.message);
@@ -37,7 +53,8 @@ exports.deleteExpense=async(req,res,next)=>{
         ({where:{id:expenseId},transaction:transaction1});
         //updating totalExpense
         let totalExpense=req.user.totalExpenses-parseInt(expense[0].expenseAmount);
-        await req.user.update({totalExpenses:totalExpense},{transaction:transaction1});
+        let numberOfExpenses=req.user.numberOfExpenses-Number(expense[0].numberOfExpenses);
+        await req.user.update({totalExpenses:totalExpense,numberOfExpenses:numberOfExpenses},{transaction:transaction1});
         // const expense=await Expense.findByPk(expenseId);
         await expense[0].destroy({transaction:transaction1});
         await transaction1.commit();
