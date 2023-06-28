@@ -1,6 +1,5 @@
 const sequelize=require('../util/database');
 
-const ITEMS_PER_PAGE=2;
 
 exports.postAddExpense=async (req,res,next)=>{
     const transaction1=await sequelize.transaction();
@@ -13,7 +12,7 @@ exports.postAddExpense=async (req,res,next)=>{
         let numberOfExpenses=req.user.numberOfExpenses+1;
         await req.user.update({totalExpenses:totalExpense,numberOfExpenses:numberOfExpenses},{transaction:transaction1});
         await transaction1.commit();
-        res.status(200).json({id:result.id,premium:req.user.ispremiumuser,numberOfExpense:req.user.numberOfExpenses,paginationLimit:ITEMS_PER_PAGE});
+        res.status(200).json({id:result.id,premium:req.user.ispremiumuser,numberOfExpense:req.user.numberOfExpenses});
     }
     catch(err){
         await transaction1.rollback();
@@ -23,7 +22,12 @@ exports.postAddExpense=async (req,res,next)=>{
 }
 exports.getExpenses=async (req,res,next)=>{
     const page=Number(req.query.page);
+    const rows_per_page=Number(req.query.rows_per_page);
     const TOTAL_NUMBER_OF_EXPENSES=req.user.numberOfExpenses;
+    let ITEMS_PER_PAGE=10;
+    if(rows_per_page){
+        ITEMS_PER_PAGE=rows_per_page;
+    }
     try{
         // const expenses=await Expense.findAll({where:{userId:req.user.id}});
         const expenses=await req.user.getExpenses({

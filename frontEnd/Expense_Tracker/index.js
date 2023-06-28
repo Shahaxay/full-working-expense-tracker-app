@@ -39,7 +39,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 async function listExpenses(page){
     console.log(page);
-    let result = await axios.get(`http://localhost:3000/expense/getExpenses?page=${page}`, { headers: { token: localStorage.getItem("token") } });
+    let result = await axios.get(`http://localhost:3000/expense/getExpenses?page=${page}&rows_per_page=${Number(localStorage.getItem('UserPreference_page_size'))}`, { headers: { token: localStorage.getItem("token") } });
         //removing buy premium button for premium user
         // console.log(result);
         addExpense_dest.innerHTML="";
@@ -51,10 +51,45 @@ async function listExpenses(page){
 }
 
 function pagination(data){
-    console.log(data);
+    // console.log(data);
     // if(data.expenses.length==0) return;
     pagination_btn.innerHTML="";
     let newEle=document.createElement('div');
+    //row per page
+    let label=document.createElement('label');
+    label.setAttribute('for','rowsNumberSelector');
+    label.textContent="Rows per page:"
+    let select=document.createElement('select');
+    select.setAttribute('id','rowsNumberSelector');
+    select.addEventListener('change',(e)=>{setUserPreferenceForPageSize(e);})
+    let op0=document.createElement('option');
+    op0.textContent="select";
+    let userPreference_pagesize=localStorage.getItem('UserPreference_page_size')
+    if(userPreference_pagesize){
+        op0.textContent='prefered:'+userPreference_pagesize;
+    }else{
+        op0.textContent="select";
+    }
+    let op1=document.createElement('option');
+    op1.textContent="2";
+    op1.value=2;
+    let op2=document.createElement('option');
+    op2.textContent="5";
+    op2.value=5;
+    op2.focus();
+    let op3=document.createElement('option');
+    op3.textContent="25";
+    op3.value=25;
+    let op4=document.createElement('option');
+    op4.textContent="50";
+    op4.value=50;
+    let op5=document.createElement('option');
+    op5.textContent="100";
+    op5.value=100;
+    select.append(op0,op1,op2,op3,op4,op5);
+    pagination_btn.append(label,select);
+
+    //pagination button
     newEle.setAttribute('id',"paginationButtonHolder");
     if(data.hasPrevious){
         let btn1=document.createElement('button');
@@ -78,6 +113,12 @@ function pagination(data){
     pagination_btn.appendChild(newEle);
 }
 
+function setUserPreferenceForPageSize(e){
+    localStorage.setItem('UserPreference_page_size',e.target.value);
+    // console.log(e.target.value);
+    listExpenses(1);
+}
+
 //add expense
 var flag=false;
 addExpenseForm.addEventListener('submit', async (e) => {
@@ -89,7 +130,7 @@ addExpenseForm.addEventListener('submit', async (e) => {
     }
     try {
         const result = await axios.post('http://localhost:3000/expense/addExpense', obj, { headers: { token: localStorage.getItem("token") } });
-        const paginationLimit=result.data.paginationLimit;
+        const paginationLimit=localStorage.getItem('UserPreference_page_size');
         const numberOfExpenses=result.data.numberOfExpense-1;
         console.log(result);
         //limiting the size in pagination
