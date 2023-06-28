@@ -1,0 +1,13 @@
+{
+    "env":{
+        "RAZORPAY_KEY_ID":"rzp_test_fRs70ThnfB6s2m",
+        "RAZORPAY_KEY_SECRET":"ZJwac81koyYYnjXG3l4PvT4h",
+        "BREVO_API_KEY":"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",
+        "IAM_USER_ACCESS_KEY":"AKIA56JPQXIP6UD2ZLP6",
+        "IAM_USER_SECRET_ACCESS_KEY":"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",
+        "SQL_USERNAME":"root",
+        "SQL_PASSWORD":"sweetualsubaby",
+        "DATABASE":"expense-complete"
+    
+    }
+}

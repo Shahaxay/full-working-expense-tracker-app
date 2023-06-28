@@ -1,6 +1,10 @@
 const express=require('express');
 const bodyParser=require('body-parser');
 const cors=require('cors');
+const helmet=require('helmet');
+const morgan=require('morgan')
+const fs=require('fs');
+const path=require('path');
 
 const db=require('./util/database')
 const userRouter=require('./routes/user');
@@ -15,12 +19,15 @@ const ForgetPasswordRequest=require('./models/forgetPasswordRequest');
 const ExpenseReportLink=require('./models/expenseReportLink');
 const authentication=require('./middleware/authentication');
 
+const logStremFile=fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'});
 
 const app=express();
 
 app.use(bodyParser.json({extended:false}));
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(cors());
+app.use(helmet());
+app.use(morgan('combined',{stream:logStremFile}));
 
 
 app.use('/user',userRouter);
@@ -51,7 +58,8 @@ ExpenseReportLink.belongsTo(User,);
 // db.sync({force:true})
 db.sync() 
 .then(result=>{ 
-    app.listen(3000,()=>console.log("listening to port 3000..."))
+    //PORT value inserted by hosting server
+    app.listen(process.env.PORT||3000,()=>console.log("listening to port 3000..."))
 })
 .catch(err=>console.log(err));
 

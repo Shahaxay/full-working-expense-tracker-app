@@ -71,12 +71,11 @@ function pagination(data){
         op0.textContent="select";
     }
     let op1=document.createElement('option');
-    op1.textContent="2";
-    op1.value=2;
+    op1.textContent="5";
+    op1.value=5;
     let op2=document.createElement('option');
-    op2.textContent="5";
-    op2.value=5;
-    op2.focus();
+    op2.textContent="10";
+    op2.value=10;
     let op3=document.createElement('option');
     op3.textContent="25";
     op3.value=25;
