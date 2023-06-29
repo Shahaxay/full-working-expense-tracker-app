@@ -62,7 +62,7 @@ exports.deleteExpense=async(req,res,next)=>{
         // const expense=await Expense.findByPk(expenseId);
         await expense[0].destroy({transaction:transaction1});
         await transaction1.commit();
-        res.status(200).json({success:true});
+        res.status(200).json({success:true,ispremiumuser:req.user.ispremiumuser});
     }
     catch(err){
         await transaction1.rollback();

@@ -1,5 +1,4 @@
 const Sib = require('sib-api-v3-sdk');
-const dotenv = require('dotenv');
 const { v4: uuidv4 } = require('uuid');
 const bcrypt=require('bcrypt');
 const sequelize=require('../util/database');
@@ -7,12 +6,13 @@ const sequelize=require('../util/database');
 const User = require('../models/users');
 const ForgetPasswordRequest=require('../models/forgetPasswordRequest');
 
-dotenv.config();
 
 
 exports.postResetPassword = async (req, res, next) => {
+    // console.log(req);
     const requestId = uuidv4();
-    const passwordResetApiLink = 'http://localhost:3000/password/resetpassword/' + requestId;
+    const passwordResetApiLink = `http://${process.env.HOSTING}:3000/password/resetpassword/` + requestId;
+    console.log(passwordResetApiLink);
     const resetEmail = req.body.resetEmail;
     const transac=await sequelize.transaction();
     try {
@@ -25,6 +25,7 @@ exports.postResetPassword = async (req, res, next) => {
             const client = Sib.ApiClient.instance;
             const apiKey = client.authentications['api-key'];
             apiKey.apiKey = process.env.BREVO_API_KEY;
+            // console.log(process.env.BREVO_API_KEY);
 
             const transEmailApi = new Sib.TransactionalEmailsApi();
 
@@ -38,7 +39,6 @@ exports.postResetPassword = async (req, res, next) => {
                     email: resetEmail
                 }
             ];
-
             const messageId=await transEmailApi.sendTransacEmail({
                 sender,
                 to: receiver,
@@ -64,19 +64,20 @@ exports.postResetPassword = async (req, res, next) => {
 }
 
 exports.getResetPsswordHandler = async (req, res, next) => {
+    console.log(process.env.HOSTING);
     const requestId = req.params.requestId;
     try{
         const resetRequest=await ForgetPasswordRequest.findOne({where:{id:requestId,isactive:true}});
         if(resetRequest){
             console.log("active");
-            res.send(`<h3>Resetting password</h3><form action="http://localhost:3000/password/change-password/${requestId}" method="post"><label for="newpass">new password</label><input type="password" id="newpass" name="newpass"><button type="submit">change password</button></form>`);
+            res.send(`<h3>Resetting password</h3><form action="http://${process.env.HOSTING}:3000/password/change-password/${requestId}" method="post"><label for="newpass">new password</label><input type="password" id="newpass" name="newpass"><button type="submit">change password</button></form>`);
         }
         else{
             res.status(400).json({message:"the link has been expired"});
         }
     }
     catch(err){
-        res.status(400).json(err);
+        res.status(400).json(err); 
     }
 }
 

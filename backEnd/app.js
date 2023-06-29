@@ -5,6 +5,8 @@ const helmet=require('helmet');
 const morgan=require('morgan')
 const fs=require('fs');
 const path=require('path');
+const dotenv=require('dotenv');
+dotenv.config();
 // const https=require('https');
 
 const db=require('./util/database')
@@ -31,7 +33,13 @@ const app=express();
 app.use(bodyParser.json({extended:false}));
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(cors());
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy:{
+        directives:{
+            scriptSrc:["'self'",'cdnjs.cloudflare.com','checkout.razorpay.com','lumberjack-cx.razorpay.com']
+        }
+    }
+}));
 app.use(morgan('combined',{stream:logStremFile}));
 
 app.use('/user',userRouter);
@@ -45,6 +53,10 @@ app.use('/expense',authentication.authenticate,expenseRouter);
 app.use('/purchase',authentication.authenticate,purchaseRoute);
 
 app.use('/premium',authentication.authenticate,premiumRoute);
+
+app.use((req,res)=>{
+    res.sendFile(path.join(__dirname,`public/${req.url}`));
+});
 
 
 User.hasMany(Expence);

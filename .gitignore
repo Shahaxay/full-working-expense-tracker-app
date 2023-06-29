@@ -1,3 +1,5 @@
 backEnd/node_modules
 backEnd/.env
 backEnd/nodemon.json
+backEnd/server.cert
+backEnd/server.key
