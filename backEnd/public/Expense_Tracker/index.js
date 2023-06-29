@@ -23,7 +23,7 @@ var pagination_btn=document.getElementById('pagination-btn');
 window.addEventListener('DOMContentLoaded', async () => {
     try {
         listExpenses(1);
-        let allExpenseReport = await axios.get(`http://localhost:3000/user/getExpenseReports`, { headers: { token: localStorage.getItem('token') } });
+        let allExpenseReport = await axios.get(`http://35.170.186.129:3000/user/getExpenseReports`, { headers: { token: localStorage.getItem('token') } });
         // console.log(allExpenseReport.data);
         if (allExpenseReport.data.ispremiumuser) {
             premiumFeatures();
@@ -39,7 +39,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 async function listExpenses(page){
     console.log(page);
-    let result = await axios.get(`http://localhost:3000/expense/getExpenses?page=${page}&rows_per_page=${Number(localStorage.getItem('UserPreference_page_size'))}`, { headers: { token: localStorage.getItem("token") } });
+    let result = await axios.get(`http://35.170.186.129:3000/expense/getExpenses?page=${page}&rows_per_page=${Number(localStorage.getItem('UserPreference_page_size'))}`, { headers: { token: localStorage.getItem("token") } });
         //removing buy premium button for premium user
         // console.log(result);
         addExpense_dest.innerHTML="";
@@ -128,7 +128,7 @@ addExpenseForm.addEventListener('submit', async (e) => {
         category: cat.value
     }
     try {
-        const result = await axios.post(`http://localhost:3000/expense/addExpense`, obj, { headers: { token: localStorage.getItem("token") } });
+        const result = await axios.post(`http://35.170.186.129:3000/expense/addExpense`, obj, { headers: { token: localStorage.getItem("token") } });
         const paginationLimit=localStorage.getItem('UserPreference_page_size');
         const numberOfExpenses=result.data.numberOfExpense-1;
         console.log(result);
@@ -193,7 +193,7 @@ function displayExpenseReport(report) {
 addExpense_dest.addEventListener('click', async (e) => {
     if (e.target.classList.contains('delete')) {
         try {
-            let expense = await axios.delete(`http://localhost:3000/expense/deleteExpense/` + e.target.dataset.id, { headers: { token: localStorage.getItem("token") } });
+            let expense = await axios.delete(`http://35.170.186.129:3000/expense/deleteExpense/` + e.target.dataset.id, { headers: { token: localStorage.getItem("token") } });
             e.target.parentElement.remove();
             console.log(expense);
             //refresh leaderboard
@@ -209,14 +209,14 @@ addExpense_dest.addEventListener('click', async (e) => {
 
 //buy premium
 buyPremiumButton.addEventListener('click', async (e) => {
-    const response = await axios.get(`http://localhost:3000/purchase/purchase-premium`, { headers: { token: localStorage.getItem("token") } });
+    const response = await axios.get(`http://35.170.186.129:3000/purchase/purchase-premium`, { headers: { token: localStorage.getItem("token") } });
     // console.log(response.data);
     var option = {
         "key": response.data.key_id,
         "order_id": response.data.order_id,
         "handler": async function (response1) {
             try {
-                await axios.post(`http://localhost:3000/purchase/update-premium`, { order_id: option.order_id, payment_id: response1.razorpay_payment_id }, { headers: { token: localStorage.getItem("token") } });
+                await axios.post(`http://35.170.186.129:3000/purchase/update-premium`, { order_id: option.order_id, payment_id: response1.razorpay_payment_id }, { headers: { token: localStorage.getItem("token") } });
                 alert("now you are premium user");
                 //removing buy premium button 
                 premiumFeatures();
@@ -260,7 +260,7 @@ function premiumFeatures() {
 //download report
 download_report_button.addEventListener('click', async () => {
     try {
-        const response = await axios.get(`http://localhost:3000/user/download-report`, { headers: { token: localStorage.getItem('token') } });
+        const response = await axios.get(`http://35.170.186.129:3000/user/download-report`, { headers: { token: localStorage.getItem('token') } });
         const fileURL = response.data.fileURL;
         console.log(fileURL);
         var a = document.createElement('a');
@@ -283,7 +283,7 @@ leaderboard_btn.addEventListener('click', showLeaderBoard)
 async function showLeaderBoard() {
     leaderboard.removeAttribute('hidden');
     try {
-        const leaderBoards_items = await axios.get(`http://localhost:3000/premium/showLeaderBoard`, { headers: { token: localStorage.getItem('token') } });
+        const leaderBoards_items = await axios.get(`http://35.170.186.129:3000/premium/showLeaderBoard`, { headers: { token: localStorage.getItem('token') } });
         // console.log(leaderBoards_items);
         leaderboard_item.innerHTML = "";
         for (let item of leaderBoards_items.data) {

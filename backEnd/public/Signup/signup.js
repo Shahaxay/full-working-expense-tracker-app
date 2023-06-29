@@ -12,7 +12,7 @@ SignupForm.addEventListener('submit',async (e)=>{
         password:password.value
     };
     try{
-        const result=await axios.post(`http://localhost:3000/user/signup`,signupObj)
+        const result=await axios.post(`http://35.170.186.129:3000/user/signup`,signupObj)
         if(result.status==200){
             showMessage("Your acount Created Successfully",'green');
             SignupForm.reset();
