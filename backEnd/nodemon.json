@@ -7,7 +7,8 @@
         "IAM_USER_SECRET_ACCESS_KEY":"RAQcFd5qWLR5HcMgDR0JC3uFW/zgt3jhUH3slUNV",
         "SQL_USERNAME":"root",
         "SQL_PASSWORD":"sweetualsubaby",
-        "DATABASE":"expense-complete"
+        "DATABASE":"expense-complete",
+        "DB_HOST":"localhost"
     
     }
 }
