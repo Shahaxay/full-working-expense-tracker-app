@@ -1,7 +1,7 @@
 const express=require('express');
 const bodyParser=require('body-parser');
 const cors=require('cors');
-const helmet=require('helmet');
+// const helmet=require('helmet');
 const morgan=require('morgan')
 const fs=require('fs');
 const path=require('path');
@@ -33,14 +33,14 @@ const app=express();
 app.use(bodyParser.json({extended:false}));
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(cors());
-app.use(helmet());
+
 // app.use(helmet({
 //     contentSecurityPolicy:{
 //         directives:{
 //             scriptSrc:["'self'",'cdnjs.cloudflare.com','checkout.razorpay.com','lumberjack-cx.razorpay.com']
 //         }
 //     }
-// }));
+
 app.use(morgan('combined',{stream:logStremFile}));
 
 app.use('/user',userRouter);
