@@ -14,7 +14,7 @@ loginForm.addEventListener('submit',async (e)=>{
         email:email.value,
         password:password.value
     };
-    console.log(loginObj);
+    // console.log(loginObj);
     try{
         const result=await axios.post(`http://34.228.46.44:3000/user/login`,loginObj)
         // console.log(result);

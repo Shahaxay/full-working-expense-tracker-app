@@ -10,6 +10,7 @@ exports.postAddExpense=async (req,res,next)=>{
         // console.log(req.user.totalExpenses);
         let totalExpense=req.user.totalExpenses+parseInt(expenseAmount);
         let numberOfExpenses=req.user.numberOfExpenses+1;
+        // console.log(totalExpense,numberOfExpenses);
         await req.user.update({totalExpenses:totalExpense,numberOfExpenses:numberOfExpenses},{transaction:transaction1});
         await transaction1.commit();
         res.status(200).json({id:result.id,premium:req.user.ispremiumuser,numberOfExpense:req.user.numberOfExpenses});

@@ -38,7 +38,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 })
 
 async function listExpenses(page){
-    console.log(page);
+    // console.log(page);
     let result = await axios.get(`http://34.228.46.44:3000/expense/getExpenses?page=${page}&rows_per_page=${Number(localStorage.getItem('UserPreference_page_size'))}`, { headers: { token: localStorage.getItem("token") } });
         //removing buy premium button for premium user
         // console.log(result);
@@ -131,7 +131,7 @@ addExpenseForm.addEventListener('submit', async (e) => {
         const result = await axios.post(`http://34.228.46.44:3000/expense/addExpense`, obj, { headers: { token: localStorage.getItem("token") } });
         const paginationLimit=localStorage.getItem('UserPreference_page_size');
         const numberOfExpenses=result.data.numberOfExpense-1;
-        console.log(result);
+        // console.log(result);
         //limiting the size in pagination
         if(numberOfExpenses<paginationLimit || !paginationLimit){
             obj.id = result.data.id;
@@ -176,7 +176,7 @@ function displayExpense(obj) {
 //display expense reports
 function displayExpenseReport(report) {
     //createdAt//report
-    console.log(report);
+    // console.log(report);
     let tr = document.createElement('tr');
     let td1 = document.createElement('td');
     let td2 = document.createElement('td');
@@ -196,7 +196,9 @@ addExpense_dest.addEventListener('click', async (e) => {
         try {
             let expense = await axios.delete(`http://34.228.46.44:3000/expense/deleteExpense/` + e.target.dataset.id, { headers: { token: localStorage.getItem("token") } });
             e.target.parentElement.remove();
-            console.log(expense);
+            // console.log(expense);
+            //refresh page of pagination
+            listExpenses(1);
             //refresh leaderboard
             if(expense.data.ispremiumuser){
                 showLeaderBoard();
@@ -246,7 +248,7 @@ buyPremiumButton.addEventListener('click', async (e) => {
     rzp.open();
 
     rzp.on('payment.failed', (response) => {
-        console.log(response);
+        // console.log(response);
         alert("something went wrong")
     })
 })
@@ -263,7 +265,7 @@ download_report_button.addEventListener('click', async () => {
     try {
         const response = await axios.get(`http://34.228.46.44:3000/user/download-report`, { headers: { token: localStorage.getItem('token') } });
         const fileURL = response.data.fileURL;
-        console.log(fileURL);
+        // console.log(fileURL);
         var a = document.createElement('a');
         a.href = fileURL;
         //set name of the downloadad file
@@ -312,7 +314,7 @@ view_report_btn.addEventListener('click', () => {
 
 //expense analysis
 daily_expense_btn.onclick = () => {
-    console.log('click');
+    // console.log('click');
     expense_analysis_ifrme.setAttribute('src', '../Daily_Expense_Analysis/dailyExpenseAnalysis.html');
 }
 weekly_expense_btn.onclick = () => {
