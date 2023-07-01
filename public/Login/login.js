@@ -23,7 +23,7 @@ loginForm.addEventListener('submit',async (e)=>{
         }else if(result.data.success==="true"){
             showMessage(result.data.message,'green');
             localStorage.setItem('token',result.data.token);
-            window.location.href = '../Expense_Tracker/index.html';
+            window.location.href = '../Expense_Tracker/home.html';
         }
     }catch(err){
         const res=err.response;
