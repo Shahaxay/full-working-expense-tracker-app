@@ -133,8 +133,9 @@ addExpenseForm.addEventListener('submit', async (e) => {
         const numberOfExpenses=result.data.numberOfExpense-1;
         console.log(result);
         //limiting the size in pagination
-        if(numberOfExpenses<paginationLimit){
+        if(numberOfExpenses<paginationLimit || !numberOfExpenses){
             obj.id = result.data.id;
+            
             displayExpense(obj);
             flag=true;
         }else if(flag){
