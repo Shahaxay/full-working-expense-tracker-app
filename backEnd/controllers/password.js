@@ -11,7 +11,7 @@ const ForgetPasswordRequest=require('../models/forgetPasswordRequest');
 exports.postResetPassword = async (req, res, next) => {
     // console.log(req);
     const requestId = uuidv4();
-    const passwordResetApiLink = `http://3.87.224.194:3000/password/resetpassword/` + requestId;
+    const passwordResetApiLink = `http://34.228.46.44:3000/password/resetpassword/` + requestId;
     console.log(passwordResetApiLink);
     const resetEmail = req.body.resetEmail;
     const transac=await sequelize.transaction();
@@ -69,7 +69,7 @@ exports.getResetPsswordHandler = async (req, res, next) => {
         const resetRequest=await ForgetPasswordRequest.findOne({where:{id:requestId,isactive:true}});
         if(resetRequest){
             console.log("active");
-            res.send(`<h3>Resetting password</h3><form action="http://3.87.224.194:3000/password/change-password/${requestId}" method="post"><label for="newpass">new password</label><input type="password" id="newpass" name="newpass"><button type="submit">change password</button></form>`);
+            res.send(`<h3>Resetting password</h3><form action="http://34.228.46.44:3000/password/change-password/${requestId}" method="post"><label for="newpass">new password</label><input type="password" id="newpass" name="newpass"><button type="submit">change password</button></form>`);
         }
         else{
             res.status(400).json({message:"the link has been expired"});

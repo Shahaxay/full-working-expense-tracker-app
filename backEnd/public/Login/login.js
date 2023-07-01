@@ -16,7 +16,7 @@ loginForm.addEventListener('submit',async (e)=>{
     };
     console.log(loginObj);
     try{
-        const result=await axios.post(`http://3.87.224.194:3000/user/login`,loginObj)
+        const result=await axios.post(`http://34.228.46.44:3000/user/login`,loginObj)
         // console.log(result);
         if(result.data.success==="false"){
             showMessage('password wrong','red');
@@ -57,7 +57,7 @@ forgetPasswordForm.addEventListener('submit',async(e)=>{
     }
     try{
         //sending request to server to send reset link to given email id if user exist
-        const result=await axios.post(`http://3.87.224.194:3000/password/reset-password`,obj);
+        const result=await axios.post(`http://34.228.46.44:3000/password/reset-password`,obj);
         alert(result.data.message);
     }
     catch(err){
